@@ -1,0 +1,6 @@
+[submodule "GCB_back"]
+	path = gcb_back
+	url = https://github.com/imagure/GCB_back
+[submodule "GCB_front"]
+	path = gcb_front
+	url = https://github.com/imagure/GCB_front

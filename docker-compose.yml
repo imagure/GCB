@@ -1,0 +1,56 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: mysql:5.7
+    container_name: gcb_database
+    restart: always
+    environment:
+      MYSQL_USER: mysql
+      MYSQL_ROOT_PASSWORD: rootmysql
+      MYSQL_PASSWORD: mysql
+      MYSQL_DATABASE: gcb
+    ports:
+      - 3306:3306
+    networks:
+      - mynetwork
+
+  app_back:
+    image: node:lts
+    build:
+      context: ./gcb_back
+    environment:
+       KNEX_ENV: gcb_container
+       PORT: 3002
+    container_name: gcb_app
+    restart: on-failure:10
+    depends_on:
+      - db
+    volumes:
+      - ./gcb_back:/usr/app
+      - /usr/app/node_modules
+    working_dir: /usr/app
+    command: ./scripts/start_dev.sh
+    ports:
+      - 3002:3002
+    networks:
+      - mynetwork
+
+  app_front:
+      image: node:lts
+      build:
+        context: ./gcb_front
+      environment:
+         PORT: 3000
+      container_name: gcb_app_front
+      volumes:
+        - ./gcb_front:/usr/app
+      working_dir: /usr/app
+      ports:
+        - 3003:3000
+      networks:
+        - mynetwork
+
+networks:
+  mynetwork:
